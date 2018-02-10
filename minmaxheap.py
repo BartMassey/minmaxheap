@@ -9,8 +9,8 @@
 
 import random
 
-def even_level(index):
-    "Tree level of index."
+def is_min_level(index):
+    "Tree level of index is some min level."
     index += 1
     return (index.bit_length() & 1) == 1
 
@@ -20,36 +20,69 @@ def downheap(a, start=0, end=None, lt=None):
         end = len(a)
     if lt == None:
         lt = lambda x, y: x < y
-    if even_level(start):
+    if is_min_level(start):
         cf = lt
     else:
         cf = lambda x, y: lt(y, x)
-    while True:
-        children = [2 * start + 1, 2 * start + 2]
-        nexti = children[0]
-        if nexti >= end:
-            return
-        grandchildren = list(range(4 * start + 3, 4 * start + 7))
-        for i in children + grandchildren:
+    assert end - start > 0
+    left = 2 * start + 1
+    while left < end:
+        right = left + 1
+        nexti = left
+        grandchildren = list(range(2 * left + 1, 2 * left + 5))
+        for i in [right] + grandchildren:
             if i >= end:
                 break
             if cf(a[i], a[nexti]):
                 nexti = i
-        if nexti in children:
+        if nexti <= right:
             if cf(a[nexti], a[start]):
                 a[nexti], a[start] = a[start], a[nexti]
             return
         else:
             if cf(a[nexti], a[start]):
                 a[nexti], a[start] = a[start], a[nexti]
-                pnexti = (nexti - 1) // 2
-                if cf(a[pnexti], a[nexti]):
-                    a[nexti], a[pnexti] = a[pnexti], a[nexti]
+                parent = (nexti - 1) // 2
+                if cf(a[parent], a[nexti]):
+                    a[nexti], a[parent] = a[parent], a[nexti]
             else:
                 return
         start = nexti
+        left = 2 * start + 1
 
-
+def upheap(a, start=None, end=None, lt=None):
+    "Upheap minmax heap a starting at position i."
+    if end == None:
+        end = len(a)
+    if start == None:
+        start = end - 1
+    if lt == None:
+        lt = lambda x, y: x < y
+    assert end - start > 0
+    if start == 0:
+        return
+    gt = lambda x, y: lt(y, x)
+    parent = (start - 1) // 2
+    if is_min_level(start):
+        if gt(a[start], a[parent]):
+            a[start], a[parent] = a[parent], a[start]
+            cf = gt
+        else:
+            cf = lt
+    else:
+        if lt(a[start], a[parent]):
+            a[start], a[parent] = a[parent], a[start]
+            cf = lt
+        else:
+            cf = gt
+    while start > 0 and parent > 0:
+        grandparent = (parent - 1) // 2
+        if cf(a[grandparent], a[start]):
+            return
+        a[start], a[grandparent] = a[grandparent], a[start]
+        start = grandparent
+        parent = (start - 1) // 2
+        
 def check_heap(a, start=0, end=None, lt=None):
     "Highly inefficient check of heap invariant."
     if end == None:
@@ -63,7 +96,7 @@ def check_heap(a, start=0, end=None, lt=None):
         return children(2 * i + 1) + [(i, a[i])] + children(2 * i + 2)
 
     def check_posn(p):
-        if even_level(p):
+        if is_min_level(p):
             cf = lambda x, y: x == y or lt(x, y)
             cfs = "<="
         else:
