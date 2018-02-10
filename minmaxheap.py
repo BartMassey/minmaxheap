@@ -9,23 +9,13 @@
 
 import random
 
-# Tree level of index.
 def even_level(index):
+    "Tree level of index."
     index += 1
     return (index.bit_length() & 1) == 1
 
-def left(i):
-    return 2 * i + 1
-
-def right(i):
-    return 2 * i + 1
-
-def parent(i):
-    assert i > 0
-    return (i - 1) // 2
-
-# Downheap minmax heap a starting at position i.
 def downheap(a, start=0, end=None, lt=None):
+    "Downheap minmax heap a starting at position i."
     if end == None:
         end = len(a)
     if lt == None:
@@ -60,8 +50,8 @@ def downheap(a, start=0, end=None, lt=None):
         start = nexti
 
 
-# Highly inefficient check of heap invariant.
 def check_heap(a, start=0, end=None, lt=None):
+    "Highly inefficient check of heap invariant."
     if end == None:
         end = len(a)
     if lt == None:
@@ -88,15 +78,15 @@ def check_heap(a, start=0, end=None, lt=None):
         check_posn(p)
 
 
-# Make a into a heap.
 def heapify(a, lt=None):
+    "Make a into a heap."
     end = len(a)
     for i in reversed(range((end-2) // 2 + 1)):
         downheap(a, start=i, lt=lt)
         # check_heap(a, start=i)
 
-# Extract min element and place it after the end of the heap.
 def store_min(a, end=None, lt=None):
+    "Extract min element and place it after the end of the heap."
     if end == None:
         end = len(a)
     if lt == None:
@@ -107,8 +97,8 @@ def store_min(a, end=None, lt=None):
     a[0], a[end-1] = a[end-1], a[0]
     downheap(a, end=end-1, lt=lt)
 
-# Extract max element and place it after the end of the heap.
 def store_max(a, end=None, lt=None):
+    "Extract max element and place it after the end of the heap."
     if end == None:
         end = len(a)
     if lt == None:
@@ -122,8 +112,8 @@ def store_max(a, end=None, lt=None):
     a[imax], a[end-1] = a[end-1], a[imax]
     downheap(a, start=imax, end=end-1, lt=lt)
 
-# Return min element.
 def peek_min(a, end=None, lt=None):
+    "Return min element."
     if end == None:
         end = len(a)
     if lt == None:
@@ -131,8 +121,8 @@ def peek_min(a, end=None, lt=None):
     assert end > 0
     return a[0]
 
-# Return max element.
 def peek_max(a, end=None, lt=None):
+    "Return max element."
     if end == None:
         end = len(a)
     if lt == None:
