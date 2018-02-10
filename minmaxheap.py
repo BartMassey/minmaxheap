@@ -61,35 +61,38 @@ def downheap(a, start=0, end=None, lt=None):
 
 
 # Highly inefficient check of heap invariant.
-def check_heap(a, start = 0):
-    n = len(a)
+def check_heap(a, start=0, end=None, lt=None):
+    if end == None:
+        end = len(a)
+    if lt == None:
+        lt = lambda x, y: x < y
 
     def children(i):
-        if i >= n:
+        if i >= end:
             return []
         return children(2 * i + 1) + [(i, a[i])] + children(2 * i + 2)
 
     def check_posn(p):
         if even_level(p):
-            cf = lambda x, y: x <= y
+            cf = lambda x, y: x == y or lt(x, y)
             cfs = "<="
         else:
-            cf = lambda x, y: x >= y
+            cf = lambda x, y: x == y or lt(y, x)
             cfs = ">="
         for i, ai in children(p):
             if not cf(a[p], ai):
                 print("failed a[{}]={} {} a[{}]={}".format(
                     p, a[p], cfs, i, ai))
 
-    for p in range(start, n):
+    for p in range(start, end):
         check_posn(p)
 
 
 # Make a into a heap.
-def heapify(a):
+def heapify(a, lt=None):
     end = len(a)
     for i in reversed(range((end-2) // 2 + 1)):
-        downheap(a, start=i)
+        downheap(a, start=i, lt=lt)
         # check_heap(a, start=i)
 
 # Extract min element and place it after the end of the heap.
@@ -118,6 +121,29 @@ def store_max(a, end=None, lt=None):
         imax = 2
     a[imax], a[end-1] = a[end-1], a[imax]
     downheap(a, start=imax, end=end-1, lt=lt)
+
+# Return min element.
+def peek_min(a, end=None, lt=None):
+    if end == None:
+        end = len(a)
+    if lt == None:
+        lt = lambda x, y: x < y
+    assert end > 0
+    return a[0]
+
+# Return max element.
+def peek_max(a, end=None, lt=None):
+    if end == None:
+        end = len(a)
+    if lt == None:
+        lt = lambda x, y: x < y
+    assert end > 0
+    if end == 1:
+        return a[0]
+    imax = 1
+    if end > 2 and lt(a[1], a[2]):
+        imax = 2
+    return a[imax]
 
 if __name__ == "__main__":
 
