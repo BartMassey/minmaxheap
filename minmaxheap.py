@@ -72,22 +72,24 @@ def upheap(a, start=None, end=None, lt=None):
     if is_min_level(start):
         if gt(a[start], a[parent]):
             a[start], a[parent] = a[parent], a[start]
+            start = parent
             cf = gt
         else:
             cf = lt
     else:
         if lt(a[start], a[parent]):
             a[start], a[parent] = a[parent], a[start]
+            start = parent
             cf = lt
         else:
             cf = gt
-    while start > 0 and parent > 0:
-        grandparent = (parent - 1) // 2
-        if cf(a[grandparent], a[start]):
-            return
+    parent = (start - 1) // 2
+    grandparent = (parent - 1) // 2
+    while start >= 3 and cf(a[start], a[grandparent]):
         a[start], a[grandparent] = a[grandparent], a[start]
         start = grandparent
         parent = (start - 1) // 2
+        grandparent = (parent - 1) // 2
         
 def check_heap(a, start=0, end=None, lt=None):
     "Highly inefficient check of heap invariant."
@@ -178,9 +180,7 @@ if __name__ == "__main__":
 
     a = [chr(ord('a') + i) for i in range(15)]
     random.shuffle(a)
-    print(''.join(a))
     heapify(a)
-    print(''.join(a))
     check_heap(a)
     n = len(a)
     small_half =  n // 2
@@ -188,4 +188,10 @@ if __name__ == "__main__":
         store_max(a, end=end)
     for end in reversed(range(1, small_half+1)):
         store_min(a, end=end)
+    assert ''.join(a) == "gfedcbahijklmno"
+
+    random.shuffle(a)
+    for i in range(n):
+        upheap(a, start=i, end=i+1)
+    check_heap(a)
     print(''.join(a))
