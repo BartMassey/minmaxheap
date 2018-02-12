@@ -2,10 +2,16 @@
 
 # Min-Max Heap
 #
-# Min-Max Heaps and Generalized Priority Queues
-# M.D. Atkinson, J.-R. Sack, N. Santoro, T. Strothotte
-# Comms ACM 29(10) p. 996, October 1986
-# http://cglab.ca/~morin/teaching/5408/refs/minmax.pdf
+#   Min-Max Heaps and Generalized Priority Queues
+#   M.D. Atkinson, J.-R. Sack, N. Santoro, T. Strothotte
+#   Comms ACM 29(10) p. 996, October 1986
+#   http://cglab.ca/~morin/teaching/5408/refs/minmax.pdf
+#
+# See also
+#   Diamond deque: a simple data structure for priority deques
+#   S.C. Chang, M.W. Du
+#   Info Proc Letters 46(5) p. 231, July 1993
+# for what would probably be a cleaner and easier data structure.
 
 import random
 
