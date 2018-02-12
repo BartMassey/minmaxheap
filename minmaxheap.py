@@ -196,6 +196,20 @@ class MinMaxHeap(object):
         if imax < self.end:
             self.downheap(imax)
 
+    def peek_min(self):
+        "Return min element."
+        assert self.start < self.end
+        return self.a[self.start]
+
+    def peek_max(self):
+        "Return max element."
+        assert self.start < self.end
+        if self.start + 1 == self.end:
+            return self.a[self.start]
+        if self.start + 2 == self.end:
+            return self.a[self.start + 1]
+        return max(self.a[self.start + 1], self.a[self.start + 2])
+
     def extract_min(self, shrink=True):
         "Extract and return min element."
         self.store_min()
