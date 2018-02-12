@@ -31,8 +31,8 @@ import random
 class MinMaxHeap(object):
     def __init__(self, a, start=0, end=None, lt=None):
         """Create a new heap with the given start and end
-        elements (end is actually size, i.e. last element
-        plus one) and comparison function."""
+           elements (end is actually size, i.e. last element
+           plus one) and comparison function."""
         self.a = a
         self.start = start
         if end == None:
@@ -89,8 +89,8 @@ class MinMaxHeap(object):
             i = nexti
             left = 2 * i + 1
 
-    def upheap(self, a, i=None):
-        """Upheap minmax heap a starting at position i."""
+    def upheap(self, i=None):
+        "Upheap minmax heap starting at position i."
         if i == None:
             i = self.end - 1
         assert i >= self.start and i < self.end
@@ -128,6 +128,18 @@ class MinMaxHeap(object):
         "Bump the end pointer toward end-of-heap."
         assert self.end > self.start
         self.end -= 1
+
+    def reset(self, start=0, end=None, lt=None):
+        """Reset start, end and possibly lt and rebuild
+           relevant portion of heap."""
+        if end == None:
+            end = len(self.a)
+        self.start = start
+        self.end = end
+        assert self.end >= self.start
+        if lt != None:
+            self.lt = lt
+        self.heapify()
 
     def check_heap(self):
         "Highly inefficient check of heap invariant."
@@ -174,14 +186,55 @@ class MinMaxHeap(object):
     def store_max(self):
         "Extract max element and place it after the new end of the heap."
         assert self.end >= self.start
-        self.end -= 1
-        if self.end <= self.start:
+        if self.end <= self.start + 1:
             return
         imax = self.start + 1
-        if self.end > imax and self.lt(self.a[imax], self.a[imax + 1]):
+        if self.end > imax + 1 and self.lt(self.a[imax], self.a[imax + 1]):
             imax += 1
+        self.end -= 1
         self.swap(imax, self.end)
-        self.downheap(imax)
+        if imax < self.end:
+            self.downheap(imax)
+
+    def extract_min(self, shrink=True):
+        "Extract and return min element."
+        self.store_min()
+        if shrink and self.end == len(self.a) - 1:
+            return self.a.pop()
+        return self.a[self.end]
+
+    def extract_max(self, shrink=True):
+        "Extract and return max element."
+        self.store_max()
+        if shrink and self.end == len(self.a) - 1:
+            return self.a.pop()
+        return self.a[self.end]
+
+    def insert(self, e, grow=True):
+        "Insert element e, maybe overwriting element beyond end."
+        if grow and self.end == len(self.a):
+            self.a.append(e)
+        else:
+            assert self.end == len(self.a) - 1
+            self.a[self.end] = e
+        self.end += 1
+        self.upheap(self.end - 1)
+
+    def sort(self, start=0, end=None):
+        """Sort the underlying array fragment in-place and return it.
+           Returns the whole array if fully sorted, else None.
+           Resets start and end if needed."""
+        if end == None:
+            end = self.end
+        if start != self.start or end != self.end:
+            self.reset(start=start, end=end)
+        if self.start == 0 and self.end == len(self.a):
+            result = self.a
+        else:
+            result = None
+        for i in reversed(range(self.start + 1, self.end)):
+            self.store_max()
+        return result
 
 if __name__ == "__main__":
 
@@ -198,8 +251,8 @@ if __name__ == "__main__":
     assert ''.join(s) == "gfedcbahijklmno"
 
     random.shuffle(s)
-    h = MinMaxHeap(s, end=0)
+    h = MinMaxHeap([])
     for i in range(n):
-        h.increment_end()
-        h.upheap(i)
+        h.insert(s[i])
     h.check_heap()
+    assert sorted(s) == h.sort()
