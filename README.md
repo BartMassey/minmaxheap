@@ -9,6 +9,10 @@ O(lg(n)) extract-min and extract-max.
 Please see the source code for references and documentation.
 More documentation needs to be inserted here soon.
 
+This code was partly inspired by a Rust implementation by
+G. Bokovikov: see
+<https://github.com/fulstaph/minmaxheap-rust>
+
 This program is licensed under the "MIT License".  Please
 see the file LICENSE in the source distribution of this
 software for license terms.
